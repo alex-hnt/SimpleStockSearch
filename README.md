@@ -3,6 +3,9 @@ A tool to quickly bring you to websites that you use to get stock market informa
 
 ![example video](https://i.imgur.com/3tjCzFE.gif)
 
+## CURRENTLY BROKEN ##
+PySimpleGUI has changed to a paid model, so it is not currently possible to compile this without their subscription. The release build should still work.
+
 ## How to Use
 Run the program and enter a ticker symbol. You can change the websites and theme by clicking on the `$` to the left of the text area. Once the program disappears, it will run in the system tray until open or closed. Press `<shift>+<alt>+h` to bring up the search window again.
 
