@@ -5,17 +5,17 @@ import keyboard
 
 SETTINGS_FILE = path.join(path.dirname(sys.executable), r'config.cfg')
 
-SITE_KEYS = [
-    'TRADINGVIEW',
-    'TWITTER',
-    'YAHOOFINANCE',
-    'MARKETWATCH',
-    'SEEKINGALPHA',
-    'STOCKCHARTS',
-    'OPENINSIDER',
-    'FINVIZ',
-    'ROBINHOOD'
-]
+SITES = {
+    "TRADINGVIEW": f"https://www.tradingview.com/chart/?symbol={{symbol}}",
+    "TWITTER": f"https://twitter.com/search?q=%24{{symbol}}",
+    "YAHOOFINANCE": f"https://finance.yahoo.com/quote/{{symbol}}",
+    "MARKETWATCH": f"https://www.marketwatch.com/investing/stock/{{symbol}}",
+    "SEEKINGALPHA": f"https://seekingalpha.com/symbol/{{symbol}}",
+    "STOCKCHARTS": f"https://stockcharts.com/sc3/ui/?s={{symbol}}",
+    "OPENINSIDER": f"http://openinsider.com/{{symbol}}",
+    "FINVIZ": f"https://finviz.com/quote.ashx?t={{symbol}}",
+    "ROBINHOOD": f"https://robinhood.com/stocks/{{symbol}}",
+}
 
 DEFAULT_SETTINGS = {
     'theme': '',
@@ -37,8 +37,7 @@ def load_settings(settings_file, default_settings):
 
 def save_settings(settings_file, settings, checked_indices):
     if checked_indices:
-        for i in range(0, len(SITE_KEYS)):
-            key = SITE_KEYS[i]
+        for i, (key) in enumerate(SITES):
             if i in checked_indices:
                 if key not in settings["enabled_sites_keys"]:
                     settings["enabled_sites_keys"].append(key)

@@ -17,7 +17,7 @@ class Checkboxes(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
 
         self.boxes = []
-        for key in usersettings.SITE_KEYS:
+        for key in usersettings.SITES:
             cb = QCheckBox(key)
             cb.setChecked(key in settings["enabled_sites_keys"])
             self.boxes.append(cb)

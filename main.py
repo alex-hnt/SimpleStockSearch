@@ -98,20 +98,8 @@ class MainFrame(QWidget):
         if not symbol:
             return
 
-        keys_to_urls = {
-            "TRADINGVIEW": f"https://www.tradingview.com/chart/?symbol={symbol}",
-            "TWITTER": f"https://twitter.com/search?q=%24{symbol}",
-            "YAHOOFINANCE": f"https://finance.yahoo.com/quote/{symbol}",
-            "MARKETWATCH": f"https://www.marketwatch.com/investing/stock/{symbol}",
-            "SEEKINGALPHA": f"https://seekingalpha.com/symbol/{symbol}",
-            "STOCKCHARTS": f"https://stockcharts.com/sc3/ui/?s={symbol}",
-            "OPENINSIDER": f"http://openinsider.com/{symbol}",
-            "FINVIZ": f"https://finviz.com/quote.ashx?t={symbol}",
-            "ROBINHOOD": f"https://robinhood.com/stocks/{symbol}",
-        }
-
         for key in self.settings["enabled_sites_keys"]:
-            url = keys_to_urls.get(key)
+            url = usersettings.SITES.get(key).format(symbol=symbol)
             if url:
                 webbrowser.open_new_tab(url)
 
