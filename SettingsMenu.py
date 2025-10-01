@@ -33,9 +33,11 @@ class SettingsMenu(QDialog):
     def __init__(self, parent, settings, reassign_hotkey_callback, repaint_theme_callback):
         super().__init__(parent)
         self.frame = parent
+        self.initial_settings = settings.copy()
         self.settings = settings
         self.reassign_hotkey_callback = reassign_hotkey_callback
         self.repaint_theme_callback = repaint_theme_callback
+        self.saved = False
 
         self.setWindowTitle("Settings")
         self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
@@ -90,12 +92,10 @@ class SettingsMenu(QDialog):
         )
     
     def on_theme_selected(self, theme):
-        original_theme = self.settings["theme"]
         self.settings["theme"] = theme
         self.repaint_theme_callback()
         self.initStylesheet()
         self.update()
-        self.settings["theme"] = original_theme
 
     def on_hotkey_button(self):
         self.hotkey_label.setText("Recording hotkey...")
@@ -112,6 +112,7 @@ class SettingsMenu(QDialog):
         usersettings.save_settings(
             usersettings.SETTINGS_FILE, self.settings, checked_indices
         )
+        self.saved = True
         self.reassign_hotkey_callback()
         self.on_exit()
 
@@ -121,6 +122,7 @@ class SettingsMenu(QDialog):
     # override closeEvent to repaint the stylesheet
     # to prevent an unsaved style remaining active
     def closeEvent(self, arg__1):
+        if (not self.saved):
+            self.settings['theme'] = self.initial_settings['theme']
         self.repaint_theme_callback()
-        self.initStylesheet()
         return super().closeEvent(arg__1)

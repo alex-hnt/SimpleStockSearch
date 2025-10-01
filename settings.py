@@ -23,13 +23,10 @@ DEFAULT_SETTINGS = {
     'enabled_sites_keys': ['TRADINGVIEW', 'TWITTER', 'YAHOOFINANCE']
 }
 
-# load_settings: Reads the settings file, sets the contents equal to the
-# 'settings' variable, and returns it.
 def load_settings(settings_file, default_settings):
     try:
         with open(settings_file, 'r') as f:
             settings = jsonload(f)
-    # If the settings file cannot be found, creates one with default settings.
     except Exception as e:
         settings = default_settings
         save_settings(settings_file, settings, None)
