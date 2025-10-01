@@ -55,13 +55,13 @@ class SettingsMenu(QDialog):
         self.hotkey_label = QLabel(self.settings["hotkey"])
 
         self.hotkey_button = QPushButton("Change Hotkey")
-        self.hotkey_button.clicked.connect(self.on_hotkey_button)
+        self.hotkey_button.clicked.connect(self.onHotkeyButtonClicked)
 
         self.theme_dropdown = QComboBox()
         for theme in Theme:
             self.theme_dropdown.addItem(theme)
         self.theme_dropdown.setCurrentIndex(self.theme_dropdown.findText(self.settings['theme']))
-        self.theme_dropdown.currentTextChanged.connect(self.on_theme_selected)
+        self.theme_dropdown.currentTextChanged.connect(self.onThemeSelected)
 
         hotkey_layout.addWidget(self.hotkey_label)
         hotkey_layout.addWidget(self.hotkey_button)
@@ -74,8 +74,8 @@ class SettingsMenu(QDialog):
         self.save_button = QPushButton("Save")
         self.back_button = QPushButton("Back")
 
-        self.save_button.clicked.connect(self.on_save)
-        self.back_button.clicked.connect(self.on_exit)
+        self.save_button.clicked.connect(self.onSave)
+        self.back_button.clicked.connect(self.onExit)
 
         button_layout.addWidget(self.save_button)
         button_layout.addWidget(self.back_button)
@@ -91,13 +91,13 @@ class SettingsMenu(QDialog):
             f"font-size: 12pt;"
         )
     
-    def on_theme_selected(self, theme):
+    def onThemeSelected(self, theme):
         self.settings["theme"] = theme
         self.repaint_theme_callback()
         self.initStylesheet()
         self.update()
 
-    def on_hotkey_button(self):
+    def onHotkeyButtonClicked(self):
         self.hotkey_label.setText("Recording hotkey...")
         self.repaint()
         hotkey = keyboard.read_hotkey(suppress=False)
@@ -107,16 +107,16 @@ class SettingsMenu(QDialog):
         else:
             self.hotkey_label.setText(self.settings["hotkey"])
 
-    def on_save(self):
+    def onSave(self):
         checked_indices = self.checkboxes.get_checked_indices()
         usersettings.save_settings(
             usersettings.SETTINGS_FILE, self.settings, checked_indices
         )
         self.saved = True
         self.reassign_hotkey_callback()
-        self.on_exit()
+        self.onExit()
 
-    def on_exit(self):
+    def onExit(self):
         self.close()
 
     # override closeEvent to repaint the stylesheet

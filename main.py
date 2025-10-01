@@ -48,14 +48,14 @@ class MainFrame(QWidget):
         layout.setContentsMargins(10, 10, 10, 10)
         self.setLayout(layout)
 
-        self.label.mousePressEvent = self.on_label_clicked
-        self.text_field.textEdited.connect(self.on_char_typed)
-        self.text_field.returnPressed.connect(self.on_text_field_submit)
+        self.label.mousePressEvent = self.onLabelClicked
+        self.text_field.textEdited.connect(self.onCharTyped)
+        self.text_field.returnPressed.connect(self.onTextFieldSubmit)
 
-        self.show_popup_signal.connect(self.show_popup)
+        self.show_popup_signal.connect(self.showPopup)
 
         # Register hotkey (this installs keyboard callback that emits the signal)
-        self.register_hotkey(self.settings["hotkey"])
+        self.registerHotkey(self.settings["hotkey"])
     
     def initStylesheet(self):
         self.setStyleSheet(
@@ -69,12 +69,12 @@ class MainFrame(QWidget):
         self.initStylesheet()
         self.update()
 
-    def on_label_clicked(self, event):
+    def onLabelClicked(self, event):
         if event.button() == Qt.LeftButton:
-            dlg = SettingsMenu(self, self.settings, self.reassign_hotkey, self.repaintTheme)
+            dlg = SettingsMenu(self, self.settings, self.reassignHotkey, self.repaintTheme)
             dlg.show()
 
-    def on_char_typed(self, text):
+    def onCharTyped(self, text):
         cursor = self.text_field.cursorPosition()
         up = text.upper()
         if up != text:
@@ -95,11 +95,12 @@ class MainFrame(QWidget):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
+            self.text_field.setText("")
             self.hide()
         else:
             super().keyPressEvent(event)
 
-    def on_text_field_submit(self):
+    def onTextFieldSubmit(self):
         symbol = self.text_field.text().strip()
         if not symbol:
             return
@@ -111,13 +112,13 @@ class MainFrame(QWidget):
 
         self.hide()
 
-    def show_popup(self):
+    def showPopup(self):
         self.show()
         self.raise_()
         self.activateWindow()
         self.text_field.setFocus()
 
-    def register_hotkey(self, hotkey):
+    def registerHotkey(self, hotkey):
         if self.hotkey_handle is not None:
             try:
                 keyboard.remove_hotkey(self.hotkey_handle)
@@ -132,8 +133,8 @@ class MainFrame(QWidget):
 
         self.hotkey_handle = keyboard.add_hotkey(hotkey, _emit_show)
 
-    def reassign_hotkey(self):
-        self.register_hotkey(self.settings["hotkey"])
+    def reassignHotkey(self):
+        self.registerHotkey(self.settings["hotkey"])
 
 
 if __name__ == "__main__":

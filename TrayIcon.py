@@ -14,7 +14,7 @@ class TrayIcon(QSystemTrayIcon):
         show_action = QAction("Show", self)
         exit_action = QAction("Exit", self)
 
-        show_action.triggered.connect(self.frame.show_popup)
+        show_action.triggered.connect(self.frame.showPopup)
         exit_action.triggered.connect(self.on_exit)
 
         menu.addAction(show_action)
