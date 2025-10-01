@@ -90,11 +90,12 @@ class SettingsMenu(QDialog):
         )
     
     def on_theme_selected(self, theme):
+        original_theme = self.settings["theme"]
         self.settings["theme"] = theme
         self.repaint_theme_callback()
         self.initStylesheet()
         self.update()
-        print(self.settings)
+        self.settings["theme"] = original_theme
 
     def on_hotkey_button(self):
         self.hotkey_label.setText("Recording hotkey...")
@@ -116,3 +117,10 @@ class SettingsMenu(QDialog):
 
     def on_exit(self):
         self.close()
+
+    # override closeEvent to repaint the stylesheet
+    # to prevent an unsaved style remaining active
+    def closeEvent(self, arg__1):
+        self.repaint_theme_callback()
+        self.initStylesheet()
+        return super().closeEvent(arg__1)
