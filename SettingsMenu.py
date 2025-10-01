@@ -1,13 +1,12 @@
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QPushButton,
-    QLabel, QCheckBox, QWidget, QGridLayout
+    QLabel, QCheckBox, QWidget, QGridLayout, QComboBox
 )
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt
 import keyboard
 import settings as usersettings
-import themes
-
+from themes import Theme
 
 class Checkboxes(QWidget):
     def __init__(self, settings, parent=None):
@@ -31,20 +30,16 @@ class Checkboxes(QWidget):
 
 
 class SettingsMenu(QDialog):
-    def __init__(self, parent, settings, reassign_hotkey_callback):
+    def __init__(self, parent, settings, reassign_hotkey_callback, repaint_theme_callback):
         super().__init__(parent)
         self.frame = parent
         self.settings = settings
         self.reassign_hotkey_callback = reassign_hotkey_callback
+        self.repaint_theme_callback = repaint_theme_callback
 
         self.setWindowTitle("Settings")
         self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-        self.setStyleSheet(
-            f"background-color: {themes.default_dark['BACKGROUND']};" 
-            f"color: {themes.default_dark['TEXT']};"
-            f"font-family: {themes.default_dark['FONT']};"
-            f"font-size: 12pt;"
-        )
+        self.initStylesheet()
         self.resize(400, 250)
 
         main_layout = QVBoxLayout(self)
@@ -56,14 +51,20 @@ class SettingsMenu(QDialog):
         row_layout.addWidget(self.checkboxes, 2)
 
         self.hotkey_label = QLabel(self.settings["hotkey"])
-        self.hotkey_label.setFont(QFont(themes.default_dark['FONT'], 12))
-        self.hotkey_label.setStyleSheet(f"color: {themes.default_dark['TEXT']};")
 
         self.hotkey_button = QPushButton("Change Hotkey")
         self.hotkey_button.clicked.connect(self.on_hotkey_button)
 
+        self.theme_dropdown = QComboBox()
+        for theme in Theme:
+            self.theme_dropdown.addItem(theme)
+        self.theme_dropdown.setCurrentIndex(self.theme_dropdown.findText(self.settings['theme']))
+        self.theme_dropdown.currentTextChanged.connect(self.on_theme_selected)
+
         hotkey_layout.addWidget(self.hotkey_label)
         hotkey_layout.addWidget(self.hotkey_button)
+        hotkey_layout.addStretch()
+        hotkey_layout.addWidget(self.theme_dropdown)
         hotkey_layout.addStretch()
 
         row_layout.addLayout(hotkey_layout, 1)
@@ -79,6 +80,21 @@ class SettingsMenu(QDialog):
 
         main_layout.addLayout(row_layout)
         main_layout.addLayout(button_layout)
+
+    def initStylesheet(self):
+        self.setStyleSheet(
+            f"background-color: {Theme[self.settings['theme']]['BACKGROUND']};" 
+            f"color: {Theme[self.settings['theme']]['TEXT']};"
+            f"font-family: {Theme[self.settings['theme']]['FONT']};"
+            f"font-size: 12pt;"
+        )
+    
+    def on_theme_selected(self, theme):
+        self.settings["theme"] = theme
+        self.repaint_theme_callback()
+        self.initStylesheet()
+        self.update()
+        print(self.settings)
 
     def on_hotkey_button(self):
         self.hotkey_label.setText("Recording hotkey...")

@@ -10,7 +10,7 @@ from PySide6.QtCore import Qt, Signal, QPointF
 from TrayIcon import TrayIcon
 from SettingsMenu import SettingsMenu
 import settings as usersettings
-import themes
+from themes import Theme
 
 
 class MainFrame(QWidget):
@@ -25,11 +25,7 @@ class MainFrame(QWidget):
 
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint) 
 
-        self.setStyleSheet(
-            f"background-color: {themes.default_dark['BACKGROUND']};"
-            f"font-family: {themes.default_dark['FONT']};"
-            f"font-size: 50pt;"
-        )
+        self.initStylesheet()
 
         self.resize(300, 125)
         screen = QApplication.primaryScreen().geometry()
@@ -38,13 +34,11 @@ class MainFrame(QWidget):
         self.tray_icon = TrayIcon(self)
 
         self.label = QLabel("$")
-        self.label.setStyleSheet(f"color: {themes.default_dark['TEXT']};")
 
         self.text_field = QLineEdit()
         self.text_field.setMaxLength(4)
         self.text_field.setStyleSheet(
-            f"background-color: {themes.default_dark['BACKGROUND']}; "
-            f"color: {themes.default_dark['TEXT_INPUT']}; border: none;"
+            f"border: none;"
         )
         self.text_field.setFocus()
 
@@ -62,10 +56,22 @@ class MainFrame(QWidget):
 
         # Register hotkey (this installs keyboard callback that emits the signal)
         self.register_hotkey(self.settings["hotkey"])
+    
+    def initStylesheet(self):
+        self.setStyleSheet(
+            f"background-color: {Theme[self.settings['theme']]['BACKGROUND']};"
+            f"color: {Theme[self.settings['theme']]['TEXT']};"
+            f"font-family: {Theme[self.settings['theme']]['FONT']};"
+            f"font-size: 50pt;"
+        )
+
+    def repaintTheme(self):
+        self.initStylesheet()
+        self.update()
 
     def on_label_clicked(self, event):
         if event.button() == Qt.LeftButton:
-            dlg = SettingsMenu(self, self.settings, self.reassign_hotkey)
+            dlg = SettingsMenu(self, self.settings, self.reassign_hotkey, self.repaintTheme)
             dlg.show()
 
     def on_char_typed(self, text):

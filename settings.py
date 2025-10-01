@@ -18,7 +18,7 @@ SITES = {
 }
 
 DEFAULT_SETTINGS = {
-    'theme': '',
+    'theme': 'default_dark',
     'hotkey': 'shift+alt+h',
     'enabled_sites_keys': ['TRADINGVIEW', 'TWITTER', 'YAHOOFINANCE']
 }
